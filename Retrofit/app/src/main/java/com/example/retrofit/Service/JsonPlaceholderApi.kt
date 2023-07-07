@@ -8,6 +8,4 @@ interface JsonPlaceholderApi {
 
     @GET("users")
     fun getUsers(): Call<List<User>>
-
-
 }

@@ -4,5 +4,5 @@ class User(
     val id: Int,
     val name: String,
     val email: String,
-    var userName: String
+    var username: String
 )

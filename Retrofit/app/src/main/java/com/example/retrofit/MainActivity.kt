@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     stringBuilder.append("\n")
                     stringBuilder.append(user.email)
                     stringBuilder.append("\n")
-                    stringBuilder.append(user.userName)
+                    stringBuilder.append(user.username)
                     stringBuilder.append("\n")
                     stringBuilder.append("\n")
                 }
