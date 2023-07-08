@@ -4,6 +4,7 @@
 
 ## UserCard
 | 사용기술 | Retrofit, Jetpack Compose, MVVM |
+| --- | --- |
 ### 사용기술 : Retrofit, Jetpack Compose, MVVM
 ### 데이터 : JsonPlaceholder - user
 | UserCard |
