@@ -3,6 +3,7 @@
 본 저장소는 Android를 배우면서 제작하게된 간단한 프로젝트를 모아두었습니다.
 
 ## UserCard
+| 사용기술 | Retrofit, Jetpack Compose, MVVM |
 ### 사용기술 : Retrofit, Jetpack Compose, MVVM
 ### 데이터 : JsonPlaceholder - user
 | UserCard |
