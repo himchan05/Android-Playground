@@ -33,9 +33,13 @@ class DrinksViewModel: ViewModel() {
     private val _categories = MutableLiveData<List<Category>>()
     val categories: LiveData<List<Category>> = _categories
 
+    val _selectedDrink = MutableLiveData<Drink>()
+    val selectedDrink: LiveData<Drink> = _selectedDrink
     //
 //    val categories: List<Category>()
     lateinit var jsonString: String
+
+
 
     fun fetchDrinks(context: Context) {
         try {
