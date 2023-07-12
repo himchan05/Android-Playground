@@ -20,10 +20,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,11 +40,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.navigation.compose.NavHost
@@ -125,7 +134,11 @@ fun MenuView(drinksViewModel: DrinksViewModel, routeAction: RouteAction) {
 }
 
 @Composable
-fun CardView(drinksViewModel: DrinksViewModel, categories: List<Category>, routeAction: RouteAction) {
+fun CardView(
+    drinksViewModel: DrinksViewModel,
+    categories: List<Category>,
+    routeAction: RouteAction
+) {
     val typography = MaterialTheme.typography
     val context = LocalContext.current
 
@@ -180,11 +193,96 @@ fun CardView(drinksViewModel: DrinksViewModel, categories: List<Category>, route
 
 @Composable
 fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
-//    val drink by drinksViewModel.selectedDrink.observeAsState()
+    val typography = MaterialTheme.typography
+    var selectedSize by remember { mutableStateOf(drink.value!!.sizes[0]) }
+    val updateSize = { size: String -> selectedSize = size }
 
+    var selectedBasic by remember { mutableStateOf("") }
+    val updateBasic = { basic: String -> selectedBasic = basic }
     Column() {
-        if (drink != null) {
-            Text(drink.value!!.name)
+        IconButton(onClick = { routeAction.goBack() }) {
+            Icon(
+                Icons.Filled.ArrowBack,
+                contentDescription = "BackBtn"
+            )
+        }
+        Column(
+            modifier = Modifier.padding(horizontal = 10.dp)
+        ) {
+            if (drink != null) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(drink.value!!.name, style = typography.titleSmall)
+                    Text(drink.value!!.price, style = typography.titleLarge)
+                }
+                Column() {
+                    if (drink.value!!.basic != null) {
+                        Column() {
+                            Text("기본", style = typography.headlineSmall)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                drink.value!!.basic.forEach { basic ->
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .clickable { updateBasic(basic) }
+                                            .background(
+                                                if (basic == selectedBasic) {
+                                                    Color.Magenta
+                                                } else {
+                                                    Color.LightGray
+                                                }
+                                            )
+                                            .padding(vertical = 12.dp, horizontal = 16.dp)
+                                    ) {
+                                        Text(
+                                            basic,
+                                            style = typography.titleLarge,
+                                            color = Color.White,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    Column() {
+                        Text("사이즈", style = typography.headlineSmall)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            drink.value!!.sizes.forEach { size ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .clickable { updateSize(size) }
+                                        .background(
+                                            if (size == selectedSize) {
+                                                Color.Magenta
+                                            } else {
+                                                Color.LightGray
+                                            }
+                                        )
+                                        .padding(vertical = 12.dp, horizontal = 16.dp)
+                                ) {
+                                    Text(
+                                        size,
+                                        style = typography.titleLarge,
+                                        color = Color.White,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
