@@ -28,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -74,7 +77,7 @@ fun NavigationGraph(
             MenuView(drinksViewModel, routeAction)
         }
         composable(NAV_ROUTE.DetailView.routeName) {
-            DetailView(drinksViewModel, routeAction)
+            DetailView(drinksViewModel.selectedDrink, routeAction)
         }
     }
 }
@@ -176,12 +179,12 @@ fun CardView(drinksViewModel: DrinksViewModel, categories: List<Category>, route
 }
 
 @Composable
-fun DetailView(drinksViewModel: DrinksViewModel, routeAction: RouteAction) {
-    val drink by drinksViewModel.selectedDrink.observeAsState()
+fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
+//    val drink by drinksViewModel.selectedDrink.observeAsState()
 
     Column() {
         if (drink != null) {
-            Text(drink!!.name)
+            Text(drink.value!!.name)
         }
     }
 }
