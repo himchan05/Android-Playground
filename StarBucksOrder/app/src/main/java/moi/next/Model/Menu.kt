@@ -20,6 +20,7 @@ data class Drink(
     val price: String,
     val sizes: List<String>,
     val basic: List<String>,
+    val ice: List<String>,
     val description: String
 )
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -197,9 +199,15 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
     var selectedSize by remember { mutableStateOf(drink.value!!.sizes[0]) }
     val updateSize = { size: String -> selectedSize = size }
 
+    var selectedIce by remember { mutableStateOf("") }
+    val updateIce = { ice: String -> selectedIce = ice }
+
     var selectedBasic by remember { mutableStateOf("") }
     val updateBasic = { basic: String -> selectedBasic = basic }
-    Column() {
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
         IconButton(onClick = { routeAction.goBack() }) {
             Icon(
                 Icons.Filled.ArrowBack,
@@ -207,23 +215,30 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
             )
         }
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp)
+            modifier = Modifier.padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(60.dp)
         ) {
-            if (drink != null) {
+            drink.value?.let {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text(drink.value!!.name, style = typography.titleSmall)
-                    Text(drink.value!!.price, style = typography.titleLarge)
+                    Text(it.name, style = typography.titleSmall)
+                    Text(it.price, style = typography.headlineSmall)
+                    Text(it.description, style = typography.titleMedium)
                 }
-                Column() {
-                    if (drink.value!!.basic != null) {
-                        Column() {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        it.basic?.let {
                             Text("기본", style = typography.headlineSmall)
+
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                drink.value!!.basic.forEach { basic ->
+                                it.forEach { basic ->
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         modifier = Modifier
@@ -250,33 +265,71 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
                         }
                     }
 
-
-                    Column() {
-                        Text("사이즈", style = typography.headlineSmall)
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            drink.value!!.sizes.forEach { size ->
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .clickable { updateSize(size) }
-                                        .background(
-                                            if (size == selectedSize) {
-                                                Color.Magenta
-                                            } else {
-                                                Color.LightGray
-                                            }
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        it.sizes?.let {
+                            Text("사이즈", style = typography.headlineSmall)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                it.forEach { size ->
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .clickable { updateSize(size) }
+                                            .background(
+                                                if (size == selectedSize) {
+                                                    Color.Magenta
+                                                } else {
+                                                    Color.LightGray
+                                                }
+                                            )
+                                            .padding(vertical = 12.dp, horizontal = 16.dp)
+                                    ) {
+                                        Text(
+                                            size,
+                                            style = typography.titleLarge,
+                                            color = Color.White,
                                         )
-                                        .padding(vertical = 12.dp, horizontal = 16.dp)
-                                ) {
-                                    Text(
-                                        size,
-                                        style = typography.titleLarge,
-                                        color = Color.White,
-                                    )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        it.ice?.let {
+                            Text("얼음", style = typography.headlineSmall)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                it.forEach { ice ->
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .clickable { updateIce(ice) }
+                                            .background(
+                                                if (ice == selectedIce) {
+                                                    Color.Magenta
+                                                } else {
+                                                    Color.LightGray
+                                                }
+                                            )
+                                            .padding(vertical = 12.dp, horizontal = 16.dp)
+                                    ) {
+                                        Text(
+                                            ice,
+                                            style = typography.titleLarge,
+                                            color = Color.White,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -284,5 +337,23 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
                 }
             }
         }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Button(
+                onClick = { routeAction.navTo(NAV_ROUTE.MenuView) },
+                shape = RoundedCornerShape(20),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(84.dp)
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(Color.Blue)
+            ) {
+                Text("주문하기", style = typography.titleMedium)
+            }
+        }
+
     }
 }
