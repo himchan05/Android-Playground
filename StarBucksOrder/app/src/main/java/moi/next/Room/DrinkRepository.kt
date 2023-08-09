@@ -2,27 +2,28 @@ package moi.next.Room
 
 import kotlinx.coroutines.flow.Flow
 
-typealias  Drinks = List<Drink>
-interface DrinkRepository {
-
+typealias  Drinks = List<Order>
+interface OrderRepository {
     fun getDrinksFromRoom(): Flow<Drinks>
 
-    suspend fun getDrinkFromRoom(id: Int): Drink
+    suspend fun getDrinkFromRoom(id: Int): Order
 
-    suspend fun addDrinkToRoom(drink: Drink)
+    suspend fun addDrinkToRoom(order: Order)
 
-    suspend fun updateDrinkInRoom(drink: Drink)
+    suspend fun updateDrinkInRoom(order: Order)
 
-    suspend fun deleteDrinkFromRoom(drink: Drink)
+    suspend fun deleteDrinkFromRoom(order: Order)
 }
 
-class DrinkRepositoryImpl(
-    private val drinkDao: DrinkDao
-) : DrinkRepository {
-    override fun getDrinksFromRoom() = drinkDao.getDrinks()
-    override suspend fun getDrinkFromRoom(id: Int) = drinkDao.getDrink(id)
-    override suspend fun addDrinkToRoom(drink: Drink) = drinkDao.addDrink(drink)
-    override suspend fun updateDrinkInRoom(drink: Drink) = drinkDao.updateDrink(drink)
-    override suspend fun deleteDrinkFromRoom(drink: Drink) = drinkDao.deleteDrink(drink)
-    
+
+
+class OrderRepositoryImpl(
+    private val orderDao: OrderDao
+): OrderRepository {
+    override fun getDrinksFromRoom() = orderDao.getOrders()
+    override suspend fun getDrinkFromRoom(id: Int) = orderDao.getOrder(id)
+    override suspend fun addDrinkToRoom(order: Order) = orderDao.addOrder(order)
+    override suspend fun updateDrinkInRoom(order: Order) = orderDao.updateOrder(order)
+    override suspend fun deleteDrinkFromRoom(order: Order) = orderDao.deleteDrink(order)
+
 }

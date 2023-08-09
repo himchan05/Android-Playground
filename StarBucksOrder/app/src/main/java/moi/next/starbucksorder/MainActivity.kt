@@ -50,17 +50,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import moi.next.Model.Category
 import moi.next.Model.Drink
-import moi.next.Model.DrinksViewModel
 import moi.next.Utill.NAV_ROUTE
 import moi.next.Utill.RouteAction
+import moi.next.ViewModel.DrinksViewModel
 
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity: ComponentActivity() {
     private val drinksViewModel: DrinksViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -193,8 +197,16 @@ fun CardView(
     }
 }
 
+
 @Composable
-fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
+fun DetailView(
+    drink: LiveData<Drink>,
+    routeAction: RouteAction,
+//    viewModel: DrinksViewModel = hiltViewModel()
+) {
+//    LaunchedEffect(Unit) {
+//        Log.d("테스트 로그", "하이😍")
+//    }
     val typography = MaterialTheme.typography
     var selectedSize by remember { mutableStateOf(drink.value!!.sizes[0]) }
     val updateSize = { size: String -> selectedSize = size }
@@ -232,7 +244,7 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.basic?.let {
+                        it.basic.let {
                             Text("기본", style = typography.headlineSmall)
 
                             Row(
@@ -268,7 +280,7 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.sizes?.let {
+                        it.sizes.let {
                             Text("사이즈", style = typography.headlineSmall)
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -303,7 +315,7 @@ fun DetailView(drink: LiveData<Drink>, routeAction: RouteAction) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.ice?.let {
+                        it.ice.let {
                             Text("얼음", style = typography.headlineSmall)
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)

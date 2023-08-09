@@ -1,15 +1,16 @@
 package moi.next.Room
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "DRINK_TABLE")
-data class Drink(
+@Entity(tableName = "ORDER_TABLE")
+data class Order(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val name: String,
     val price: String,
-    val sizes: List<String>,
-    val basic: List<String>,
-    val ice: List<String>,
+    val sizes: String,
+    val basic: String,
+    val ice: String,
     val description: String
 )

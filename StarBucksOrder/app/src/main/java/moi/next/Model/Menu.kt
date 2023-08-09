@@ -28,31 +28,3 @@ data class Category(
     val name: String,
     val drinks: List<Drink>
 )
-
-class DrinksViewModel: ViewModel() {
-//    var categories by mutableStateOf<List<Category>>(emptyList())
-
-    private val _categories = MutableLiveData<List<Category>>()
-    val categories: LiveData<List<Category>> = _categories
-
-    val _selectedDrink = MutableLiveData<Drink>()
-    val selectedDrink: LiveData<Drink> = _selectedDrink
-    //
-//    val categories: List<Category>()
-    lateinit var jsonString: String
-
-
-
-    fun fetchDrinks(context: Context) {
-        try {
-            jsonString = context.assets.open("drink.json")
-                .bufferedReader()
-                .use { it.readText() }
-            Log.e("text", "noError")
-        } catch (e: Exception) {
-            Log.e("text", "Error")
-        }
-        val typeToken = object : TypeToken<List<Category>>() {}.type
-        _categories.value = Gson().fromJson<List<Category>>(jsonString, typeToken)
-    }
-}
