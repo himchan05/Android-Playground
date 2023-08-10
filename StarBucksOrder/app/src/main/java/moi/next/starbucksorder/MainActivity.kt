@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,13 +53,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
 import moi.next.Model.Category
 import moi.next.Model.Drink
+import moi.next.Room.Order
 import moi.next.Utill.NAV_ROUTE
 import moi.next.Utill.RouteAction
 import moi.next.ViewModel.DrinksViewModel
@@ -93,6 +98,9 @@ fun NavigationGraph(
         }
         composable(NAV_ROUTE.DetailView.routeName) {
             DetailView(drinksViewModel.selectedDrink, routeAction)
+        }
+        composable(NAV_ROUTE.OrderView.routeName) {
+            OrderView(routeAction)
         }
     }
 }
@@ -202,19 +210,20 @@ fun CardView(
 fun DetailView(
     drink: LiveData<Drink>,
     routeAction: RouteAction,
-//    viewModel: DrinksViewModel = hiltViewModel()
+    viewModel: DrinksViewModel = hiltViewModel()
 ) {
-//    LaunchedEffect(Unit) {
-//        Log.d("테스트 로그", "하이😍")
-//    }
+    LaunchedEffect(Unit) {
+        Log.d("테스트 로그", "하이😍")
+    }
+
     val typography = MaterialTheme.typography
     var selectedSize by remember { mutableStateOf(drink.value!!.sizes[0]) }
     val updateSize = { size: String -> selectedSize = size }
 
-    var selectedIce by remember { mutableStateOf("") }
+    var selectedIce by remember { mutableStateOf("보통") }
     val updateIce = { ice: String -> selectedIce = ice }
 
-    var selectedBasic by remember { mutableStateOf("") }
+    var selectedBasic by remember { mutableStateOf("ICE") }
     val updateBasic = { basic: String -> selectedBasic = basic }
 
     Column(
@@ -226,11 +235,12 @@ fun DetailView(
                 contentDescription = "BackBtn"
             )
         }
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(60.dp)
-        ) {
-            drink.value?.let {
+        drink.value?.let {
+            Column(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(60.dp)
+            ) {
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -244,7 +254,7 @@ fun DetailView(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.basic.let {
+                        it.basic?.let {
                             Text("기본", style = typography.headlineSmall)
 
                             Row(
@@ -280,7 +290,7 @@ fun DetailView(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.sizes.let {
+                        it.sizes?.let {
                             Text("사이즈", style = typography.headlineSmall)
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -315,7 +325,7 @@ fun DetailView(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        it.ice.let {
+                        it.ice?.let {
                             Text("얼음", style = typography.headlineSmall)
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -348,24 +358,78 @@ fun DetailView(
                     }
                 }
             }
-        }
 
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Button(
-                onClick = { routeAction.navTo(NAV_ROUTE.MenuView) },
-                shape = RoundedCornerShape(20),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(84.dp)
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(Color.Blue)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                Text("주문하기", style = typography.titleMedium)
+                Button(
+                    onClick = {
+                        val order = Order(0, it.name, it.price, selectedSize, selectedBasic, selectedIce, it.description)
+                        viewModel.addOrder(order)
+                        routeAction.navTo(NAV_ROUTE.OrderView)
+                              },
+                    shape = RoundedCornerShape(20),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(84.dp)
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(Color.Blue)
+                ) {
+                    Text("주문하기", style = typography.titleMedium)
+                }
             }
         }
 
+    }
+}
+
+@Composable
+fun OrderView(
+    routeAction: RouteAction,
+    viewModel: DrinksViewModel = hiltViewModel()
+) {
+    val typography = MaterialTheme.typography
+    val orders by viewModel.orders.collectAsState(initial = emptyList())
+
+    LaunchedEffect(Unit) {
+        Log.d("테스트 로그", "오더 뷰")
+        Log.d("테스트 로그", "${orders}")
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(30.dp),
+    ) {
+        IconButton(onClick = { routeAction.goBack() }) {
+            Icon(
+                Icons.Filled.ArrowBack,
+                contentDescription = "BackBtn"
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(30.dp),
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
+            Text("주문 완료", style = typography.displaySmall)
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                orders.forEach {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(it.name)
+                            Text("${it.basic}/ ${it.sizes} / ${it.ice}")
+                        }
+                        Text(it.price)
+                    }
+                }
+            }
+        }
     }
 }
