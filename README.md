@@ -17,4 +17,4 @@
 <img width="252" height="432" src="https://github.com/himchan05/Android-Playground/assets/80749921/87dd8bce-4d3a-4dc9-ae55-021058c546aa">
 <img width="252" height="432" src="https://github.com/himchan05/Android-Playground/assets/80749921/bac331a0-ea0b-4be1-91b3-d795e43b2f08">
 <img width="252" height="432" src="https://github.com/himchan05/Android-Playground/assets/80749921/6e671a39-3c05-48e6-aac2-417562775b8f">
-<img width="252" height="432" src="https://github.com/himchan05/Android-Playground
+<img width="252" height="432" src="https://github.com/himchan05/Android-Playground/assets/80749921/8cdfbde9-32dd-4f22-a312-43584b707aa9">
